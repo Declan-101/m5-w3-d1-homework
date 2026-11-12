@@ -23,3 +23,9 @@ Open the localhost URL printed by Vite. The classroom account is `student@exampl
 Run `npm run build` from `react-fb_login` to build the app for hosting. This classroom app displays a profile from the SDK callback. A service protecting private data would validate the provider token on its server before granting access.
 
 [Course instructions](https://gap.westcliff.edu/mod/resource/view.php?id=2140029) · [Facebook login component](https://github.com/keppelen/react-facebook-login)
+
+## Verification
+
+The production build passes. Classroom sign-in and sign-out were checked in the browser, and a real Facebook login reached the home screen with the returned profile on November 12, 2026. The SDK is loaded before the required react-facebook-login component and explicitly selects the standard popup because Chrome FedCM failed on localhost.
+
+This project uses Vite to run the React app; the course slides demonstrate Create React App. React, React Bootstrap, Bootstrap 4 and react-facebook-login remain the course libraries.

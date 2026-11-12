@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Button, Card, Container, Form } from 'react-bootstrap';
+import { prepareFacebookLogin } from './facebookSdk';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 
 const appId = (import.meta.env.VITE_FACEBOOK_APP_ID || '').trim();
@@ -58,6 +59,15 @@ function Home({ profile, onLogout }) {
 
 export default function App() {
   const [profile, setProfile] = useState(null);
+  const [sdkReady, setSdkReady] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    if (facebookEnabled) prepareFacebookLogin()
+      .then(() => { if (active) setSdkReady(true); })
+      .catch(reason => { if (active) setError(reason.message); });
+    return () => { active = false; };
+  }, []);
   const [error, setError] = useState('');
 
   function responseFacebook(response) {
@@ -91,7 +101,7 @@ export default function App() {
                 <LoginForm onLogin={setProfile} />
                 <div className="divider"><span>or</span></div>
                 {error && <Alert variant="danger" role="alert">{error}</Alert>}
-                {facebookEnabled ? (
+                {facebookEnabled && sdkReady ? (
                   <FacebookLogin
                     appId={appId}
                     version={graphVersion}
@@ -111,7 +121,8 @@ export default function App() {
                   <>
                     <Button block variant="outline-primary" disabled>Continue with Facebook</Button>
                     <Form.Text className="text-muted">
-                      {appId ? 'Open this app over HTTPS to use Facebook login.'
+                      {facebookEnabled ? (error ? 'Facebook could not load. Refresh to try again.' : 'Loading Facebook login…')
+                        : appId ? 'Open this app over HTTPS to use Facebook login.'
                         : 'Set your Facebook App ID to enable this button.'}
                     </Form.Text>
                   </>
